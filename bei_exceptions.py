@@ -1,0 +1,2 @@
+class UnbalancedParen(Exception):
+    pass

@@ -1,5 +1,6 @@
 from bei_functions import *
 from bei_exceptions import *
+from itertools import *
 
 keywords = ['true', 'false', 'and', 'or', 'not', '(', ')']
 
@@ -31,6 +32,7 @@ def shunting_yard(tokens, symbols):
     if '(' in stack: raise UnbalancedParen
     return queue + list(reversed(stack))
 
+# http://en.wikipedia.org/wiki/Reverse_Polish_notation
 def rpn(tokens, symbols):
     """
     tokens: [token]
@@ -52,23 +54,33 @@ def rpn(tokens, symbols):
     if len(stack) != 1: raise InvalidException
     return stack[0]
 
-
-########
-# Tests 
-########
-def test(expr, symbols):
+def evaluate(expr, symbols):
     tokens = expr.split()
     tokens = shunting_yard(tokens, symbols)
-    result = rpn(tokens, symbols)
-    print 'Expression: %s' % expr
-    print 'Result: %s ' % result
-    print "***********************"
+    return rpn(tokens, symbols)
 
-print "***********************"
-symbols = {'x': True, 'y': False, 'z': True}
-print 'x=true, y=false, z=true'
-print "***********************"
-test('x', symbols)
-test('( not x ) and y', symbols)
-test('( ( ( ( x or ( y and z ) ) ) ) ) ', symbols)
-test('x and x and x and x and x and x and x and false', symbols)
+def gen_truth_table(expr):
+    """
+    expr: str
+    symbols: [str]
+    """
+    symbols = set(filter(lambda x: x not in keywords, expr.split()))
+    header = ''
+    for s in symbols: header += '  %s  |' % s
+    line_break = ''.join(['-' for i in range(len(header)+len(expr)+1)])
+    print header + ' ' + expr
+    print line_break
+    permutations = list(product((True, False), repeat=len(symbols)))
+    for p in permutations:
+        p_symbols = {}
+        line = ''
+        for i, s in enumerate(symbols):
+            line += str(p[i])
+            if p[i] == True: line += ' '
+            line += str('|')
+            p_symbols[s] = p[i]
+        print line + ' ' + str(evaluate(expr, p_symbols))
+        print line_break
+
+
+gen_truth_table('x and ( y or not z )')

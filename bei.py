@@ -1,5 +1,6 @@
 from bei_functions import *
 from bei_exceptions import *
+from util import *
 from itertools import *
 
 keywords = ['true', 'false', 'and', 'or', 'not', '(', ')']
@@ -59,28 +60,26 @@ def evaluate(expr, symbols):
     tokens = shunting_yard(tokens, symbols)
     return rpn(tokens, symbols)
 
-def gen_truth_table(expr):
+def get_unique_symbols(expr):
+    symbols = filter(lambda x: x not in keywords, expr.split())
+    del_duplicates(symbols)
+    return symbols
+
+def create_truth_table(expr): # -> [[(s1,T|F), (s2,T|F)... expr_result]... ] 
     """
     expr: str
-    symbols: [str]
     """
-    symbols = set(filter(lambda x: x not in keywords, expr.split()))
-    header = ''
-    for s in symbols: header += '  %s  |' % s
-    line_break = ''.join(['-' for i in range(len(header)+len(expr)+1)])
-    print header + ' ' + expr
-    print line_break
-    permutations = list(product((True, False), repeat=len(symbols)))
+    symbols      = get_unique_symbols(expr)
+    permutations = list(product((True, False), repeat=len(symbols))) 
+    truth_table  = []
     for p in permutations:
-        p_symbols = {}
-        line = ''
+        row = []
+        symbol_vals = {}
         for i, s in enumerate(symbols):
-            line += str(p[i])
-            if p[i] == True: line += ' '
-            line += str('|')
-            p_symbols[s] = p[i]
-        print line + ' ' + str(evaluate(expr, p_symbols))
-        print line_break
+            row.append((s,p[i]))
+            symbol_vals[s] = p[i]
+        row.append(evaluate(expr, symbol_vals))
+        truth_table.append(row)
+    return truth_table
 
-
-gen_truth_table('x and ( y or not z )')
+print create_truth_table('x or y')

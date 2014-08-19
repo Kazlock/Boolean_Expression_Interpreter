@@ -52,7 +52,7 @@ def rpn(tokens, symbols): # -> Boolean
             stack.append(operators[token](*args))
         else: raise InvalidExpression
 
-    if len(stack) != 1: raise InvalidException
+    if len(stack) != 1: raise InvalidExpression
     return stack[0]
 
 def evaluate(expr, symbols): # -> Boolean

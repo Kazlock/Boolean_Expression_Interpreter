@@ -11,7 +11,7 @@ num_args  = {'and': 2, 'or': 2, 'not': 1}
 
 # en.wikipedia.org/wiki/Shunting-yard_algorithm
 # all operators have equal precedence and are left-associative
-def shunting_yard(tokens, symbols):
+def shunting_yard(tokens, symbols): # -> [str]
     """
     tokens: [token]
     symbols: {symbol: True|False}
@@ -34,7 +34,7 @@ def shunting_yard(tokens, symbols):
     return queue + list(reversed(stack))
 
 # http://en.wikipedia.org/wiki/Reverse_Polish_notation
-def rpn(tokens, symbols):
+def rpn(tokens, symbols): # -> Boolean
     """
     tokens: [token]
     symbols: {symbol: True|False}
@@ -55,12 +55,19 @@ def rpn(tokens, symbols):
     if len(stack) != 1: raise InvalidException
     return stack[0]
 
-def evaluate(expr, symbols):
+def evaluate(expr, symbols): # -> Boolean
+    """
+    expr: str
+    symbols: {symbol: True|False}
+    """
     tokens = expr.split()
     tokens = shunting_yard(tokens, symbols)
     return rpn(tokens, symbols)
 
-def get_unique_symbols(expr):
+def get_unique_symbols(expr): # -> [str]
+    """
+    expr: str
+    """
     symbols = filter(lambda x: x not in keywords, expr.split())
     del_duplicates(symbols)
     return symbols
@@ -82,4 +89,25 @@ def create_truth_table(expr): # -> [[(s1,T|F), (s2,T|F)... expr_result]... ]
         truth_table.append(row)
     return truth_table
 
-print create_truth_table('x or y')
+def sort_truth_table(tt): # -> None
+    """
+    tt: see create_truth_table()
+    """
+    for i, row in enumerate(tt):
+        tt[i][0:len(row)-1] = sorted(tt[i][0:len(row)-1], key=lambda s: s[0])
+
+def compare_exprs(expr1, expr2): # -> Boolean
+    """
+    expr1: str
+    expr2: str
+    """
+    tt1 = create_truth_table(expr1)
+    tt2 = create_truth_table(expr2)
+    sort_truth_table(tt1)
+    sort_truth_table(tt2)
+    for row in tt1:
+        if row not in tt2:
+            return False
+    return True
+
+print compare_exprs('( x and y ) or ( x and z )', 'x and ( y or z )')

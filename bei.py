@@ -19,9 +19,9 @@ def shunting_yard(tokens, symbols): # -> [str]
     queue = []
     stack = []
     for token in tokens:
-        if token in symbols.keys() + literals.keys():
+        if token in symbols or token in literals:
             queue.append(token)
-        elif token in operators.keys() + ['(']:
+        elif token in operators or token == '(':
             stack.append(token)
         elif token == ')':
             while stack and stack[-1] != '(':
@@ -41,11 +41,11 @@ def rpn(tokens, symbols): # -> Boolean
     """
     stack = []
     for token in tokens:
-        if token in symbols.keys():
+        if token in symbols:
             stack.append(symbols[token])
-        elif token in literals.keys():
+        elif token in literals:
             stack.append(literals[token])
-        elif token in operators.keys():
+        elif token in operators:
             if num_args[token] > len(stack):
                 raise InvalidExpression
             args = [stack.pop() for i in range(num_args[token])]

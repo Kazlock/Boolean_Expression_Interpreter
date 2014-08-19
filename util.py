@@ -1,5 +1,4 @@
-def del_duplicates(xs):
-    seen = []
-    for i, x in enumerate(xs):
-        if x in seen:del(xs[i])
-        else: seen.append(x)
+def del_duplicates(seq):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in seq if not (x in seen or seen_add(x))]

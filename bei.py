@@ -1,7 +1,7 @@
 from bei_functions import *
 from bei_exceptions import *
 from util import *
-from itertools import *
+from itertools import product
 
 keywords = ['true', 'false', 'and', 'or', 'not', '(', ')']
 
@@ -69,16 +69,18 @@ def get_unique_symbols(expr): # -> [str]
     expr: str
     """
     symbols = filter(lambda x: x not in keywords, expr.split())
-    del_duplicates(symbols)
+    symbols = del_duplicates(symbols)
     return symbols
 
-def create_truth_table(expr): # -> [[(s1,T|F), (s2,T|F)... expr_result]... ] 
+def create_truth_table(expr, extra_symbols = []): 
     """
     expr: str
+    -> [[(s1,T|F), (s2,T|F)... expr_result]... ] 
     """
-    symbols      = get_unique_symbols(expr)
+    symbols = del_duplicates(get_unique_symbols(expr) + extra_symbols)
     permutations = list(product((True, False), repeat=len(symbols))) 
-    truth_table  = []
+
+    truth_table = []
     for p in permutations:
         row = []
         symbol_vals = {}
@@ -89,7 +91,8 @@ def create_truth_table(expr): # -> [[(s1,T|F), (s2,T|F)... expr_result]... ]
         truth_table.append(row)
     return truth_table
 
-def sort_truth_table(tt): # -> None
+# Sorts the symbols in each row of the truth table
+def sort_tt_symbols(tt): # -> None
     """
     tt: see create_truth_table()
     """
@@ -101,13 +104,12 @@ def compare_exprs(expr1, expr2): # -> Boolean
     expr1: str
     expr2: str
     """
-    tt1 = create_truth_table(expr1)
-    tt2 = create_truth_table(expr2)
-    sort_truth_table(tt1)
-    sort_truth_table(tt2)
+    eq_symbols = get_unique_symbols(expr1) + get_unique_symbols(expr2)
+    tt1 = create_truth_table(expr1, eq_symbols)
+    tt2 = create_truth_table(expr2, eq_symbols)
+    sort_tt_symbols(tt1)
+    sort_tt_symbols(tt2)
     for row in tt1:
         if row not in tt2:
             return False
     return True
-
-print compare_exprs('( x and y ) or ( x and z )', 'x and ( y or z )')

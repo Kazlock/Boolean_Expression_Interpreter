@@ -77,6 +77,9 @@ def create_truth_table(expr, extra_symbols = []):
     expr: str
     -> [[(s1,T|F), (s2,T|F)... expr_result]... ] 
     """
+    # pad parentheses with white space for token split
+    expr = expr.replace('(', ' ( ')   
+    expr = expr.replace(')', ' ) ')
     symbols = del_duplicates(get_unique_symbols(expr) + extra_symbols)
     permutations = list(product((True, False), repeat=len(symbols))) 
 
@@ -113,3 +116,38 @@ def compare_exprs(expr1, expr2): # -> Boolean
         if row not in tt2:
             return False
     return True
+
+
+
+# so ugly
+def print_tt(tt, expr): # -> None
+    """
+    tt: see create_truth_table()
+    expr: str
+    """
+    rows = []
+    last_col_len = 8
+    if len(expr)>6: last_col_len += len(expr)-6
+    bar_len = 8*(len(tt[0])-1)+last_col_len
+    header = '|'
+    for s in tt[0][:-1]: header += '   ' + s[0] + '   |'
+    if last_col_len == 8: header += ' '*(7-len(expr))+expr+' |'
+    else: header += ' ' + expr + ' |'
+    rows.append('+'+'-'*bar_len+'+')
+    rows.append(header)
+    for r in tt:
+        rows.append('|'+'-'*bar_len+'|')
+        values_row = '|'
+        for s in r[:-1]:
+            if s[1]: values_row += ' True  |'
+            else: values_row += ' False |'
+        if r[-1]: values_row += ' '*(last_col_len - 7) +'  True ' + '|'
+        else: values_row += ' '*(last_col_len - 7) +' False ' + '|'
+        rows.append(values_row)
+    rows.append('+'+'-'*bar_len+'+')
+
+    for r in rows: print r
+    
+expr = '(x or y) or (z and y)'
+tt = create_truth_table(expr)
+print_tt(tt, expr)

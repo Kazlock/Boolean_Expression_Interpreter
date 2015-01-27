@@ -28,7 +28,7 @@ def shunting_yard(tokens, symbols): # -> [str]
                 queue.append(stack.pop())
             if not stack: raise UnbalancedParen
             else: stack.pop()
-        else: raise InvalidExpression
+        else: raise UndefinedToken(token)
 
     if '(' in stack: raise UnbalancedParen
     return queue + list(reversed(stack))
@@ -60,8 +60,14 @@ def evaluate(expr, symbols): # -> Boolean
     expr: str
     symbols: {symbol: True|False}
     """
+    # pad parentheses with white space for token split
+    expr = expr.replace('(', ' ( ')   
+    expr = expr.replace(')', ' ) ')
     tokens = expr.split()
-    tokens = shunting_yard(tokens, symbols)
+    try:
+        tokens = shunting_yard(tokens, symbols)
+    except:
+        raise
     return rpn(tokens, symbols)
 
 def get_unique_symbols(expr): # -> [str]
@@ -148,6 +154,41 @@ def print_tt(tt, expr): # -> None
 
     for r in rows: print r
     
-expr = '(x or y) or (z and y)'
-tt = create_truth_table(expr)
-print_tt(tt, expr)
+
+#repl
+def repl():
+    run = True
+    symbols = {}
+    while run:
+        inp = raw_input('> ')
+        cmd = inp.split()
+        if len(cmd) == 0:
+            continue
+        elif cmd[0] == "q":
+            run = False
+        elif cmd[0] == "cmpr":
+            pass
+        elif cmd[0] == "tt":
+            pass
+        elif cmd[0] == "symbols":
+            print symbols
+        elif "=" in inp:
+            inp = inp.split("=")
+            if len(inp) > 2:
+                print "Syntax error"
+            elif inp[1] == "true":
+                symbols[inp[0]] = True
+            elif inp[1] == "false":
+                symbols[inp[0]] = False
+            else:
+                print "Syntax error"
+        else:
+            try:
+                print evaluate(' '.join(cmd), symbols)
+            except UndefinedToken as e:
+                print "Syntax error:", e
+            except UnbalancedParen as e:
+                print "Syntax error:", e
+
+if __name__ == "__main__":
+    repl()

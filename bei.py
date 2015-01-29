@@ -36,8 +36,8 @@ def shunting_yard(tokens, symbols): # -> [str]
 # http://en.wikipedia.org/wiki/Reverse_Polish_notation
 def rpn(tokens, symbols): # -> Boolean
     """
-    tokens: [token]
-    symbols: {symbol: True|False}
+    tokens: [str]
+    symbols: {symbol: bool}
     """
     stack = []
     for token in tokens:
@@ -58,7 +58,7 @@ def rpn(tokens, symbols): # -> Boolean
 def evaluate(expr, symbols): # -> Boolean
     """
     expr: str
-    symbols: {symbol: True|False}
+    symbols: {symbol: bool}
     """
     # pad parentheses with white space for token split
     expr = expr.replace('(', ' ( ')   
@@ -81,7 +81,7 @@ def get_unique_symbols(expr): # -> [str]
 def create_truth_table(expr, extra_symbols = []): 
     """
     expr: str
-    -> [[(s1,T|F), (s2,T|F)... expr_result]... ] 
+    -> [[(s1,boolean), (s2,boolean)... expr_result]... ] 
     """
     # pad parentheses with white space for token split
     expr = expr.replace('(', ' ( ')   

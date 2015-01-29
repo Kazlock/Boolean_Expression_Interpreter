@@ -96,7 +96,11 @@ def create_truth_table(expr, extra_symbols = []):
         for i, s in enumerate(symbols):
             row.append((s,p[i]))
             symbol_vals[s] = p[i]
-        row.append(evaluate(expr, symbol_vals))
+        try:
+            res = evaluate(expr, symbol_vals)
+        except:
+            raise
+        row.append(res)
         truth_table.append(row)
     return truth_table
 
@@ -113,9 +117,14 @@ def compare_exprs(expr1, expr2): # -> Boolean
     expr1: str
     expr2: str
     """
+    tt1 = []
+    tt2 = []
     eq_symbols = get_unique_symbols(expr1) + get_unique_symbols(expr2)
-    tt1 = create_truth_table(expr1, eq_symbols)
-    tt2 = create_truth_table(expr2, eq_symbols)
+    try:
+        tt1 = create_truth_table(expr1, eq_symbols)
+        tt2 = create_truth_table(expr2, eq_symbols)
+    except:
+        raise
     sort_tt_symbols(tt1)
     sort_tt_symbols(tt2)
     for row in tt1:
@@ -167,9 +176,38 @@ def repl():
         elif cmd[0] == "q":
             run = False
         elif cmd[0] == "cmpr":
-            pass
+            exprs = ' '.join(cmd[1:])
+            if '|' not in exprs:
+                print "Format: cmpr expr1 | expr2"
+                continue
+            exprs = exprs.split('|')
+            res = None
+            try:
+                res = compare_exprs(exprs[0], exprs[1])
+            except UndefinedToken as e:
+                print "Error:", e
+            except UnbalancedParen as e:
+                print "Syntax error:", e
+            except InvalidExpression:
+                print "Invalid expression"
+            if res:
+                print "Equivalent"
+            else:
+                print "Not Equivalent"
+                
+            
         elif cmd[0] == "tt":
-            pass
+            expr = ' '.join(cmd[1:])
+            try:
+                tt = create_truth_table(expr)
+                print_tt(tt, expr)
+            except UndefinedToken as e:
+                print "Error:", e
+            except UnbalancedParen as e:
+                print "Syntax error:", e
+            except InvalidExpression:
+                print "Invalid expression"
+            
         elif cmd[0] == "symbols":
             print symbols
         elif "=" in inp:
@@ -186,9 +224,11 @@ def repl():
             try:
                 print evaluate(' '.join(cmd), symbols)
             except UndefinedToken as e:
-                print "Syntax error:", e
+                print "Error:", e
             except UnbalancedParen as e:
                 print "Syntax error:", e
+            except InvalidExpression:
+                print "Invalid expression"
 
 if __name__ == "__main__":
     repl()

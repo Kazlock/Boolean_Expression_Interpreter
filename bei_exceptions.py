@@ -1,5 +1,6 @@
 class UnbalancedParen(Exception):
-    pass
+    def __str__(self):
+        return "Parenthesis are unbalanced"
 
 class InvalidExpression(Exception):
     pass

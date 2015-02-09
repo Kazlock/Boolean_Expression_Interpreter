@@ -1,25 +1,25 @@
 #Boolean Expression Interpreter
 
-###To run:
-`python bei.py`
+####To run:
+`$ python bei.py`
 
-###Evaluate Expressions
+####Evaluate Expression
 ```
-\> x=true
-\> y=false
-\> x and y
+&gt x=true
+&gt y=false
+&gt x and y
 False
 ```
 
-###Compare Expressions
+####Compare Expressions
 ```
-\> cmpr (x and y) or (x and z) | x and (y or z)
+&gt cmpr (x and y) or (x and z) | x and (y or z)
 Equivalent
 ```
 
-###Create Truth TAble
+####Create Truth Table
 ```
-\> tt x or y
+&gt tt x or y
 +------------------------+
 |   x   |   y   | x or y |
 |------------------------|
@@ -33,8 +33,7 @@ Equivalent
 +------------------------+
 ```
 
-###Exit REPL
->q
+####Exit REPL
+&gt q
 
-
-##Operator precedence is not implemented correctly at moment so clear ambiguities with parenthesis
+####Operator precedence is not implemented correctly at moment so clear ambiguities with parenthesis

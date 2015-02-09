@@ -34,6 +34,6 @@ Equivalent
 ```
 
 ####Exit REPL
-'> q'
+`> q`
 
 ####Operator precedence is not implemented correctly at moment so clear ambiguities with parenthesis
